@@ -112,7 +112,7 @@ const Dashboard = () => {
                                 <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=1470&auto=format&fit=crop')] bg-cover bg-center opacity-50 group-hover:scale-105 transition-transform duration-700 grayscale group-hover:grayscale-0"></div>
                                 <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent"></div>
                                 <div className="absolute bottom-0 left-0 p-8">
-                                    <h3 className="text-3xl font-display font-black italic uppercase text-white mb-1 group-hover:text-brand-green transition-colors">Treinos</h3>
+                                    <h3 className="text-2xl lg:text-3xl font-display font-black italic uppercase text-white mb-1 group-hover:text-brand-green transition-colors">Treinos</h3>
                                     <div className="h-1 w-12 bg-white group-hover:bg-brand-green transition-colors rounded-full mb-2"></div>
                                     <p className="text-xs text-gray-400 uppercase tracking-widest font-bold">Ver Planilha</p>
                                 </div>
@@ -126,7 +126,7 @@ const Dashboard = () => {
                                 <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1490645935967-10de6ba17061?q=80&w=1453&auto=format&fit=crop')] bg-cover bg-center opacity-50 group-hover:scale-105 transition-transform duration-700 grayscale group-hover:grayscale-0"></div>
                                 <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent"></div>
                                 <div className="absolute bottom-0 left-0 p-8">
-                                    <h3 className="text-3xl font-display font-black italic uppercase text-white mb-1 group-hover:text-brand-green transition-colors">Nutrição</h3>
+                                    <h3 className="text-2xl lg:text-3xl font-display font-black italic uppercase text-white mb-1 group-hover:text-brand-green transition-colors">Nutrição</h3>
                                     <div className="h-1 w-12 bg-white group-hover:bg-brand-green transition-colors rounded-full mb-2"></div>
                                     <p className="text-xs text-gray-400 uppercase tracking-widest font-bold">Ver Cardápio</p>
                                 </div>
@@ -140,7 +140,7 @@ const Dashboard = () => {
                                 <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=1470&auto=format&fit=crop')] bg-cover bg-center opacity-50 group-hover:scale-105 transition-transform duration-700 grayscale group-hover:grayscale-0"></div>
                                 <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent"></div>
                                 <div className="absolute bottom-0 left-0 p-8">
-                                    <h3 className="text-3xl font-display font-black italic uppercase text-white mb-1 group-hover:text-brand-green transition-colors">Performance</h3>
+                                    <h3 className="text-2xl lg:text-3xl font-display font-black italic uppercase text-white mb-1 group-hover:text-brand-green transition-colors">Performance</h3>
                                     <div className="h-1 w-12 bg-white group-hover:bg-brand-green transition-colors rounded-full mb-2"></div>
                                     <p className="text-xs text-gray-400 uppercase tracking-widest font-bold">Dados Científicos</p>
                                 </div>
@@ -155,10 +155,10 @@ const Dashboard = () => {
                 <div className="animate-fade-in min-h-screen pb-20">
                     <SectionHeader title="Protocolo de Treino" subtitle="Sua rotina semanal" />
 
-                    <div className="container mx-auto px-4 md:px-12">
+                    <div className="container mx-auto px-4 md:px-12 border-x border-white/5 bg-white/[0.02] min-h-screen pt-8">
                         <div className="flex space-x-6 overflow-x-auto pb-12 scrollbar-hide snap-x snap-mandatory">
                             {getTreino().map((dia, idx) => (
-                                <div key={idx} onClick={() => setSelectedWorkout(dia)} className="snap-start flex-none w-80 md:w-96 bg-gray-900/50 border border-white/10 rounded-2xl overflow-hidden relative group cursor-pointer hover:border-brand-green/50 transition-all duration-300 hover:-translate-y-2">
+                                <div key={idx} onClick={() => setSelectedWorkout(dia)} className="snap-start flex-none w-80 md:w-96 bg-zinc-900/80 border border-white/10 rounded-2xl overflow-hidden relative group cursor-pointer hover:border-brand-green/50 transition-all duration-300 hover:-translate-y-2">
                                     <div className="h-40 bg-gray-800 relative overflow-hidden">
                                         <div className="absolute inset-0 bg-brand-green/20 mix-blend-overlay z-10"></div>
                                         <img
@@ -179,14 +179,16 @@ const Dashboard = () => {
                                         </div>
                                     </div>
                                     <div className="p-6 space-y-4">
-                                        <ul className="space-y-3">
+                                        <ul className="space-y-4">
                                             {(dia?.exercicios || []).slice(0, 4).map((ex, i) => (
-                                                <li key={i} className="flex justify-between items-start border-b border-white/5 pb-2 last:border-0">
-                                                    <div>
-                                                        <p className="text-sm font-bold text-gray-200 uppercase">{ex?.nome || 'Exercício'}</p>
-                                                        <p className="text-[10px] text-gray-500 uppercase">{ex?.obs || 'Execução Perfeita'}</p>
+                                                <li key={i} className="flex justify-between items-center border-b border-white/5 pb-2 last:border-0">
+                                                    <div className="pr-2">
+                                                        <p className="text-sm font-bold text-gray-200 uppercase leading-tight">{ex?.nome || 'Exercício'}</p>
+                                                        <p className="text-[10px] text-gray-500 uppercase mt-1">{ex?.obs || 'Execução Perfeita'}</p>
                                                     </div>
-                                                    <span className="text-xs font-bold text-brand-green bg-brand-green/10 px-2 py-1 rounded">{ex?.series || '3x10'}</span>
+                                                    <div className="flex-shrink-0 w-12 h-12 rounded-full border-2 border-brand-green/30 bg-brand-green/5 flex items-center justify-center p-1 group-hover:border-brand-green transition-colors">
+                                                        <span className="text-[10px] font-black text-brand-green text-center leading-none">{ex?.series || '3x10'}</span>
+                                                    </div>
                                                 </li>
                                             ))}
                                         </ul>
@@ -215,7 +217,7 @@ const Dashboard = () => {
                 <div className="animate-fade-in min-h-screen pb-20">
                     <SectionHeader title="Nutrição Estratégica" subtitle="Combustível para resultado" />
 
-                    <div className="container mx-auto px-4 md:px-12">
+                    <div className="container mx-auto px-4 md:px-12 border-x border-white/5 bg-white/[0.02] min-h-screen pt-8 pb-12">
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                             {getDieta().map((ref, idx) => (
                                 <div key={idx} className="bg-black border border-white/10 rounded-2xl p-6 hover:border-brand-green/30 transition-colors group h-full">
@@ -256,7 +258,7 @@ const Dashboard = () => {
                 <div className="animate-fade-in min-h-screen pb-20">
                     <SectionHeader title="Ciência Aplicada" subtitle="Análise de Métricas" />
 
-                    <div className="container mx-auto px-4 md:px-12">
+                    <div className="container mx-auto px-4 md:px-12 border-x border-white/5 bg-white/[0.02] min-h-screen pt-8 pb-12">
                         <div className="grid md:grid-cols-2 gap-12 items-start">
                             <div className="space-y-6">
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -345,14 +347,19 @@ const Dashboard = () => {
                                 <div className="space-y-6">
                                     {(selectedWorkout.exercicios || []).map((ex, i) => (
                                         <div key={i} className="group border-b border-white/5 pb-4 last:border-0 hover:border-brand-green/30 transition-colors">
-                                            <div className="flex flex-col md:flex-row justify-between items-start mb-2 gap-2">
-                                                <h3 className="text-base md:text-lg font-bold text-white uppercase group-hover:text-brand-green transition-colors leading-tight">{ex.nome}</h3>
-                                                <span className="px-3 py-1 bg-white/10 rounded text-xs font-mono font-bold text-brand-green whitespace-nowrap shrink-0">{ex.series}</span>
+                                            <div className="flex flex-row justify-between items-start mb-2 gap-4">
+                                                <div className="flex-1">
+                                                    <h3 className="text-lg md:text-xl font-bold text-white uppercase group-hover:text-brand-green transition-colors leading-tight">{ex.nome}</h3>
+                                                    <p className="text-sm text-gray-400 mt-1">
+                                                        <span className="text-xs uppercase font-bold text-gray-600 mr-2">Dica:</span>
+                                                        {ex.obs}
+                                                    </p>
+                                                </div>
+                                                <div className="flex-shrink-0 w-16 h-16 rounded-full border-2 border-brand-green/30 bg-brand-green/5 flex flex-col items-center justify-center p-1 group-hover:border-brand-green group-hover:bg-brand-green/10 transition-all shadow-lg shadow-black/50">
+                                                    <span className="text-[9px] text-gray-400 font-bold uppercase leading-none mb-0.5">Séries</span>
+                                                    <span className="text-xs md:text-sm font-black text-brand-green text-center leading-none break-all">{ex.series}</span>
+                                                </div>
                                             </div>
-                                            <p className="text-sm text-gray-400">
-                                                <span className="text-xs uppercase font-bold text-gray-600 mr-2">Dica do Coach:</span>
-                                                {ex.obs}
-                                            </p>
                                         </div>
                                     ))}
                                 </div>
