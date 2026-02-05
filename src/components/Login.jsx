@@ -76,7 +76,7 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-brand-dark p-4 font-sans text-white relative overflow-hidden">
+    <div className="min-h-screen w-full flex items-center justify-center bg-brand-dark p-4 font-sans text-white relative overflow-hidden isolate transform-gpu">
 
       {/* Background Ambience */}
       <div className="absolute inset-0 z-0 opacity-20">
