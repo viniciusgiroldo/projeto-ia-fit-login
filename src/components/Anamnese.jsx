@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { generateFitnessPlan } from '../services/aiService';
+import { useAuth } from '../contexts/AuthContext';
+import { userService } from '../services/userService';
 
 const Anamnese = () => {
     const navigate = useNavigate();
@@ -138,6 +140,8 @@ const Anamnese = () => {
     const currentQuestions = steps[currentStep].questions.filter(q => !q.condition || q.condition(formData));
     const progress = ((currentStep + 1) / steps.length) * 100;
 
+    const { user } = useAuth(); // Get current user
+
     const handleNext = async () => {
         if (currentStep < steps.length - 1) {
             setCurrentStep(prev => prev + 1);
@@ -146,6 +150,13 @@ const Anamnese = () => {
             setIsGenerating(true);
             try {
                 const plan = await generateFitnessPlan(formData);
+
+                // SAVE TO DB
+                if (user) {
+                    await userService.saveAnamnese(user.id, formData);
+                    await userService.savePlan(user.id, plan);
+                }
+
                 navigate('/dashboard', { state: { plan, user: formData } });
             } catch (error) {
                 console.error('Erro:', error);

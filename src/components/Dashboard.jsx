@@ -1,30 +1,73 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
+import { userService } from '../services/userService';
 
 const Dashboard = () => {
     const location = useLocation();
     const navigate = useNavigate();
+    const { user: authUser } = useAuth();
+
     const [plan, setPlan] = useState(null);
-    const [user, setUser] = useState(null);
+    const [user, setUser] = useState(null); // Anamnese data
+    const [loading, setLoading] = useState(true);
     const [selectedWorkout, setSelectedWorkout] = useState(null);
     const [showProfile, setShowProfile] = useState(false);
-    const [activeSection, setActiveSection] = useState('home'); // 'home', 'treino', 'dieta', 'performance'
+    const [activeSection, setActiveSection] = useState('home');
 
     useEffect(() => {
-        if (location.state?.plan) {
-            setPlan(location.state.plan);
-            setUser(location.state.user);
-        } else {
-            // Logic for when there is no plan
-        }
-    }, [location, navigate]);
+        const loadData = async () => {
+            // Priority 1: Data passed via State (Fresh generation)
+            if (location.state?.plan) {
+                setPlan(location.state.plan);
+                setUser(location.state.user);
+                setLoading(false);
+                return;
+            }
+
+            // Priority 2: Fetch from DB
+            if (authUser) {
+                try {
+                    const { user: anamneseData, plan: planData } = await userService.getUserFullData(authUser.id);
+                    if (anamneseData && planData) {
+                        setPlan(planData);
+                        setUser(anamneseData);
+                    }
+                } catch (error) {
+                    console.error("Erro ao buscar dados:", error);
+                } finally {
+                    setLoading(false);
+                }
+            } else {
+                // Not authenticated or no user yet, wait for AuthContext
+                // (AuthContext handles its own loading, so authUser might be null briefly)
+                if (authUser === null) {
+                    // Could set loading false if we are sure auth is done, 
+                    // but AuthContext usually provides a 'loading' flag too. 
+                    // For now, let's just let it finish.
+                }
+            }
+        };
+
+        loadData();
+    }, [location, authUser]);
+
+    if (loading) {
+        return (
+            <div className="min-h-screen bg-brand-dark text-white flex items-center justify-center p-4 font-sans">
+                <div className="animate-pulse text-brand-green font-bold text-xl uppercase tracking-widest">
+                    Carregando seu plano...
+                </div>
+            </div>
+        );
+    }
 
     if (!plan) {
         return (
             <div className="min-h-screen bg-brand-dark text-white flex items-center justify-center p-4 font-sans">
                 <div className="text-center">
                     <h2 className="text-all text-3xl font-display font-black italic mb-4">Nenhum plano encontrado</h2>
-                    <p className="text-gray-400 mb-6">Parece que você acessou esta página diretamente.</p>
+                    <p className="text-gray-400 mb-6">Parece que você ainda não gerou seu treino.</p>
                     <button onClick={() => navigate('/anamnese')} className="px-8 py-3 bg-brand-green text-black font-bold uppercase tracking-widest rounded-lg hover:scale-105 transition-transform">
                         Fazer Anamnese
                     </button>

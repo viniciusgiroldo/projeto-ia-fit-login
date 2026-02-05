@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { userService } from '../services/userService';
+import { supabase } from '../services/supabase';
 
 const Login = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -21,10 +23,20 @@ const Login = () => {
     try {
       if (isLogin) {
         await signIn(email, password);
+        // Check if user has data
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+          const hasData = await userService.hasAnamnese(user.id);
+          if (hasData) {
+            navigate('/dashboard');
+          } else {
+            navigate('/anamnese');
+          }
+        }
       } else {
         await signUp(email, password, fullName);
+        navigate('/anamnese');
       }
-      navigate('/anamnese');
     } catch (err) {
       console.error(err);
       setError(err.message || 'Ocorreu um erro. Verifique seus dados.');
