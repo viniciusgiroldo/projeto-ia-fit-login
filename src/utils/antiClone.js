@@ -23,7 +23,7 @@ class AntiClone {
         this.disableRightClick();           // ✅ ATIVO
         this.disableKeyboardShortcuts();    // ✅ ATIVO  
         this.detectDevTools();              // ✅ ATIVO
-        // this.detectDownloadExtensions(); // ❌ DESATIVADO - bloqueia demais!
+        this.detectDownloadExtensions();    // ✅ ATIVO (versão inteligente)
         this.obfuscateContent();            // ✅ ATIVO
         this.addIntegrityChecks();          // ✅ ATIVO
         this.disableTextSelection();        // ✅ ATIVO (CSS + JS)
@@ -288,82 +288,71 @@ class AntiClone {
     }
 
     /**
-     * Detecta extensões de download (SingleFile, HTTrack, etc) - ULTRA AGRESSIVA
+     * Detecta extensões de download APENAS quando realmente ativas
+     * Versão INTELIGENTE - sem falsos positivos
      */
     detectDownloadExtensions() {
-        // Lista de padrões suspeitos
-        const suspiciousPatterns = [
-            'data-single-file',
-            'data-sf-hidden',
-            'data-sf-inliner',
-            'single-file',
-            'singlefile',
-            'Page saved with',
-            'Archive processed by'
+        console.log('%c[AntiClone] 🔍 Detecção INTELIGENTE de extensões ativa', 'color: #4E9F3D;');
+
+        // Padrões ESPECÍFICOS que SingleFile adiciona APENAS quando clonando
+        const singleFileSignatures = [
+            'data-single-file-attribute',  // Atributo principal do SingleFile
+            'shadow-root-serializer',      // Script injetado pelo SingleFile
         ];
 
-        // Verificação contínua a cada 50ms
-        const checkForExtensions = () => {
-            if (this.destroyed) return;
+        let detectionCount = 0;
+        const DETECTION_THRESHOLD = 3; // Precisa de 3+ indicadores para bloquear (reduz falsos positivos)
 
-            // Verificar atributos
-            for (const pattern of suspiciousPatterns) {
-                if (document.querySelector(`[${pattern}]`)) {
-                    this.onDownloadExtensionDetected();
-                    return;
-                }
-            }
-
-            // Verificar HTML content
-            const htmlContent = document.documentElement.outerHTML;
-            for (const pattern of suspiciousPatterns) {
-                if (htmlContent.includes(pattern)) {
-                    this.onDownloadExtensionDetected();
-                    return;
-                }
-            }
-
-            // Verificar scripts injetados
-            const scripts = Array.from(document.querySelectorAll('script'));
-            if (scripts.some(s =>
-                s.textContent?.toLowerCase().includes('single') ||
-                s.src?.toLowerCase().includes('single')
-            )) {
-                this.onDownloadExtensionDetected();
-                return;
-            }
-
-            // Detectar data:image excessivo (indica captura)
-            const hasExcessiveDataUrls = (htmlContent.match(/data:image/g) || []).length > 5;
-            if (hasExcessiveDataUrls && htmlContent.length > 200000) {
-                this.onDownloadExtensionDetected();
-                return;
-            }
-        };
-
-        // MutationObserver ultra-sensível
+        // MutationObserver focado APENAS em mudanças suspeitas
         this.mutationObserver = new MutationObserver((mutations) => {
             for (const mutation of mutations) {
-                // Detectar adição de atributos suspeitos
+                // Detectar atributos data-single-file-*
                 if (mutation.type === 'attributes') {
                     const target = mutation.target;
-                    for (const pattern of suspiciousPatterns) {
-                        if (target.hasAttribute && target.hasAttribute(pattern)) {
+
+                    // Verificar atributos específicos do SingleFile
+                    if (target.hasAttribute && (
+                        target.hasAttribute('data-single-file-attribute') ||
+                        target.hasAttribute('data-sf-hidden')
+                    )) {
+                        detectionCount++;
+                        console.warn(`[AntiClone] ⚠️ Atributo SingleFile detectado (${detectionCount}/${DETECTION_THRESHOLD})`);
+
+                        if (detectionCount >= DETECTION_THRESHOLD) {
                             this.onDownloadExtensionDetected();
                             return;
                         }
                     }
                 }
 
-                // Detectar adição de nós suspeitos
+                // Detectar scripts injetados pelo SingleFile
                 if (mutation.type === 'childList') {
                     mutation.addedNodes.forEach((node) => {
-                        if (node.nodeType === 1 && node.outerHTML) {
-                            const html = node.outerHTML.toLowerCase();
-                            for (const pattern of suspiciousPatterns) {
-                                if (html.includes(pattern.toLowerCase())) {
-                                    this.onDownloadExtensionDetected();
-                                    return;
+                        if (node.nodeType === 1) {
+                            // Script com assinatura SingleFile
+                            if (node.tagName === 'SCRIPT' && node.textContent) {
+                                if (node.textContent.includes('single-file') ||
+                                    node.textContent.includes('shadow-root')) {
+                                    detectionCount++;
+                                    console.warn(`[AntiClone] ⚠️ Script SingleFile detectado (${detectionCount}/${DETECTION_THRESHOLD})`);
+
+                                    if (detectionCount >= DETECTION_THRESHOLD) {
+                                        this.onDownloadExtensionDetected();
+                                        return;
+                                    }
+                                }
+                            }
+
+                            // Comentário específico do SingleFile
+                            if (node.nodeType === 8 && node.nodeValue) { // Comment node
+                                if (node.nodeValue.includes('Page saved with SingleFile')) {
+                                    detectionCount += 2; // Comentário é forte indicador
+                                    console.warn(`[AntiClone] ⚠️ Comentário SingleFile detectado (${detectionCount}/${DETECTION_THRESHOLD})`);
+
+                                    if (detectionCount >= DETECTION_THRESHOLD) {
+                                        this.onDownloadExtensionDetected();
+                                        return;
+                                    }
                                 }
                             }
                         }
@@ -372,26 +361,16 @@ class AntiClone {
             }
         });
 
+        // Observer configurado para detectar mudanças
         this.mutationObserver.observe(document.documentElement, {
             attributes: true,
+            attributeFilter: ['data-single-file-attribute', 'data-sf-hidden', 'data-sf-inliner'],
             childList: true,
-            subtree: true,
-            characterData: true,
-            attributeOldValue: true
+            subtree: true
         });
 
-        // Verificação inicial
-        checkForExtensions();
-
-        // Verificação contínua a cada 50ms
-        setInterval(checkForExtensions, 50);
-
-        // Detectar pelo user agent
-        const ua = navigator.userAgent.toLowerCase();
-        const suspiciousAgents = ['httrack', 'wget', 'curl', 'scrapy', 'bot', 'spider'];
-        if (suspiciousAgents.some(agent => ua.includes(agent))) {
-            this.onDownloadExtensionDetected();
-        }
+        // NÃO fazer verificação preventiva - esperar SingleFile agir primeiro
+        console.log('%c[AntiClone] ✅ Aguardando atividade de extensões...', 'color: #4E9F3D;');
     }
 
     /**
