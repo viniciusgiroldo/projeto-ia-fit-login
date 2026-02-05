@@ -19,20 +19,18 @@ class AntiClone {
     init() {
         console.log('%c[AntiClone] 🛡️ Sistema de proteção ATIVADO', 'color: #4E9F3D; font-weight: bold; font-size: 14px;');
 
-        // Inicializar todas as proteções imediatamente
-        this.disableRightClick();
-        this.disableKeyboardShortcuts();
-        this.detectDevTools();
-        this.detectDownloadExtensions();
-        this.obfuscateContent();
-        this.addIntegrityChecks();
-        this.antiDebugger();
-        this.detectScreenCapture();
-        this.disableTextSelection();
-        this.addVisibleWatermark();      // ← NOVO: Marca d'água rastreável
-        this.detectInactivity();         // ← NOVO: Detector de inatividade
+        // Inicializar proteções focadas em clonagem, não em desenvolvimento
+        // this.disableRightClick();           // ← Desativado: muito frustrante
+        // this.disableKeyboardShortcuts();    // ← Desativado: impede desenvolvimento
+        // this.detectDevTools();              // ← Desativado: bloqueia demais
+        this.detectDownloadExtensions();    // ← ATIVO: Bloqueia clonagem real
+        this.obfuscateContent();            // ← ATIVO: Confunde scrapers
+        this.addIntegrityChecks();          // ← ATIVO: Detecta adulteração
+        // this.disableTextSelection();        // ← Desativado: frustra usuários
+        this.addVisibleWatermark();         // ← ATIVO: Rastreamento
+        this.detectInactivity();            // ← ATIVO: Dificulta gravações longas
 
-        console.log('%c[AntiClone] ✅ 11 camadas de proteção ativas', 'color: #4E9F3D; font-weight: bold;');
+        console.log('%c[AntiClone] ✅ Proteções anti-clonagem ativas (modo balanceado)', 'color: #4E9F3D; font-weight: bold;');
     }
 
     /**
@@ -144,16 +142,12 @@ class AntiClone {
     }
 
     /**
-     * Anti-debugger - Dificulta debugging
+     * Anti-debugger - DESATIVADO (muito agressivo)
+     * Bloqueia até usuários legítimos
      */
     antiDebugger() {
-        setInterval(() => {
-            (function () {
-                return false;
-            }
-            ['constructor']('debugger')
-            ['call']());
-        }, 50);
+        // Desativado - causava bloqueio total da página
+        console.log('%c[AntiClone] Anti-debugger desativado (modo balanceado)', 'color: #ff9800;');
     }
 
     /**
