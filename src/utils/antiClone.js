@@ -19,11 +19,11 @@ class AntiClone {
     init() {
         console.log('%c[AntiClone] 🛡️ Sistema de proteção ATIVADO', 'color: #4E9F3D; font-weight: bold; font-size: 14px;');
 
-        // Proteções ativas conforme solicitado
+        // Proteções ativas - MODO SEGURO (não bloqueia usuários)
         this.disableRightClick();           // ✅ ATIVO
         this.disableKeyboardShortcuts();    // ✅ ATIVO  
         this.detectDevTools();              // ✅ ATIVO
-        this.detectDownloadExtensions();    // ✅ ATIVO
+        // this.detectDownloadExtensions(); // ❌ DESATIVADO - bloqueia demais!
         this.obfuscateContent();            // ✅ ATIVO
         this.addIntegrityChecks();          // ✅ ATIVO
         this.disableTextSelection();        // ✅ ATIVO (CSS + JS)
