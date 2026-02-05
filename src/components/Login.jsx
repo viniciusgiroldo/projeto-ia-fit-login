@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { userService } from '../services/userService';
@@ -11,9 +11,35 @@ const Login = () => {
   const [fullName, setFullName] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [checkingSession, setCheckingSession] = useState(true);
 
-  const { signIn, signUp } = useAuth();
+  const { signIn, signUp, user: authUser } = useAuth();
   const navigate = useNavigate();
+
+  // Auto-redirect if already logged in
+  useEffect(() => {
+    const checkSession = async () => {
+      if (authUser) {
+        try {
+          const hasData = await userService.hasAnamnese(authUser.id);
+          if (hasData) {
+            navigate('/dashboard');
+          } else {
+            navigate('/anamnese');
+          }
+        } catch (error) {
+          console.error("Erro verificação sessão:", error);
+        }
+      }
+      setCheckingSession(false);
+    };
+
+    checkSession();
+  }, [authUser, navigate]);
+
+  if (checkingSession && authUser) {
+    return <div className="min-h-screen bg-brand-dark flex items-center justify-center"><div className="animate-spin h-8 w-8 border-t-2 border-brand-green rounded-full"></div></div>;
+  }
 
   const handleAuth = async (e) => {
     e.preventDefault();
