@@ -6,7 +6,7 @@ import { userService } from '../services/userService';
 const Dashboard = () => {
     const location = useLocation();
     const navigate = useNavigate();
-    const { user: authUser } = useAuth();
+    const { user: authUser, loading: authLoading } = useAuth(); // Get auth loading state
 
     const [plan, setPlan] = useState(null);
     const [user, setUser] = useState(null); // Anamnese data
@@ -40,17 +40,22 @@ const Dashboard = () => {
                 }
             } else {
                 // Not authenticated or no user yet, wait for AuthContext
-                // (AuthContext handles its own loading, so authUser might be null briefly)
-                if (authUser === null) {
-                    // Could set loading false if we are sure auth is done, 
-                    // but AuthContext usually provides a 'loading' flag too. 
-                    // For now, let's just let it finish.
+                if (loading) {
+                    // Still strictly loading auth, do nothing, just wait.
+                    // The 'loading' state of this component is initialized to true, so it will show spinner.
+                    return;
+                }
+
+                // If auth thinks it's done (loading=false) but no user, redirect to login
+                // This protects the route now that AuthProvider doesn't block.
+                if (!authUser) {
+                    navigate('/');
                 }
             }
         };
 
         loadData();
-    }, [location, authUser]);
+    }, [location, authUser, loading, navigate]);
 
     if (loading) {
         return (

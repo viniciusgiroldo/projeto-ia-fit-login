@@ -140,7 +140,12 @@ const Anamnese = () => {
     const currentQuestions = steps[currentStep].questions.filter(q => !q.condition || q.condition(formData));
     const progress = ((currentStep + 1) / steps.length) * 100;
 
-    const { user } = useAuth(); // Get current user
+    const { user, loading: authLoading } = useAuth();
+
+    // Allow rendering but block "Next" if auth is loading? 
+    // Actually Anamnese is public-ish but needs user to save.
+    // We can let them fill it out, and just check user availability at the end.
+    // But to be safe, if we need user ID, let's wait or handle it.
 
     const handleNext = async () => {
         if (currentStep < steps.length - 1) {
@@ -149,6 +154,19 @@ const Anamnese = () => {
         } else {
             setIsGenerating(true);
             try {
+                if (authLoading) {
+                    alert("Aguarde a verificação de autenticação...");
+                    setIsGenerating(false);
+                    return;
+                }
+
+                if (!user) {
+                    alert('Erro de autenticação. Por favor, faça login novamente.');
+                    navigate('/');
+                    setIsGenerating(false);
+                    return;
+                }
+
                 const plan = await generateFitnessPlan(formData);
 
                 // SAVE TO DB
