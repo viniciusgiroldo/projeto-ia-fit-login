@@ -11,12 +11,11 @@ const Login = () => {
   const [fullName, setFullName] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const [checkingSession, setCheckingSession] = useState(true);
 
   const { signIn, signUp, user: authUser } = useAuth();
   const navigate = useNavigate();
 
-  // Auto-redirect if already logged in
+  // Auto-redirect if already logged in (but don't block rendering)
   useEffect(() => {
     const checkSession = async () => {
       if (authUser) {
@@ -35,7 +34,6 @@ const Login = () => {
           navigate('/dashboard');
         }
       }
-      setCheckingSession(false);
     };
 
     checkSession();

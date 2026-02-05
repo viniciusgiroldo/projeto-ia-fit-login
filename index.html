@@ -1,58 +1,103 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>web-app</title>
-  </head>
-  <body>
-    <div id="root">
-      <!-- STATIC LOADER: Visible instantly while JS loads -->
-      <style>
-        body { background-color: #121212; margin: 0; }
-        .initial-loader {
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          height: 100vh;
-          width: 100vw;
-          background-color: #121212;
-          color: #00e676; /* brand-green */
-          font-family: sans-serif;
-          flex-direction: column;
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>web-app</title>
+
+  <!-- Anti-Scraping Meta Tags -->
+  <meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex" />
+  <meta name="googlebot" content="noindex, nofollow" />
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+  <!-- CRITICAL: Inline styles to prevent white/black flash -->
+  <style>
+    html,
+    body {
+      background-color: #121212;
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      width: 100%;
+    }
+
+    #root {
+      height: 100%;
+      width: 100%;
+      background-color: #121212;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="root">
+    <!-- STATIC LOADER: Visible instantly while JS loads -->
+    <style>
+      body {
+        background-color: #121212;
+        margin: 0;
+      }
+
+      .initial-loader {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        width: 100vw;
+        background-color: #121212;
+        color: #00e676;
+        /* brand-green */
+        font-family: sans-serif;
+        flex-direction: column;
+      }
+
+      .spinner {
+        width: 40px;
+        height: 40px;
+        border: 3px solid rgba(255, 255, 255, 0.1);
+        border-radius: 50%;
+        border-top-color: #00e676;
+        animation: spin 0.8s ease-in-out infinite;
+        margin-bottom: 20px;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
         }
-        .spinner {
-          width: 40px;
-          height: 40px;
-          border: 3px solid rgba(255, 255, 255, 0.1);
-          border-radius: 50%;
-          border-top-color: #00e676;
-          animation: spin 0.8s ease-in-out infinite;
-          margin-bottom: 20px;
-        }
-        @keyframes spin {
-          to { transform: rotate(360deg); }
-        }
-        .logo-text {
-          font-weight: 900;
-          letter-spacing: -1px;
-          font-size: 24px;
-          color: white;
-          font-style: italic;
+      }
+
+      .logo-text {
+        font-weight: 900;
+        letter-spacing: -1px;
+        font-size: 24px;
+        color: white;
+        font-style: italic;
+        opacity: 0.8;
+        animation: pulse 2s infinite;
+      }
+
+      @keyframes pulse {
+
+        0%,
+        100% {
           opacity: 0.8;
-          animation: pulse 2s infinite;
         }
-        @keyframes pulse {
-          0%, 100% { opacity: 0.8; }
-          50% { opacity: 0.4; }
+
+        50% {
+          opacity: 0.4;
         }
-      </style>
-      <div class="initial-loader">
-        <div class="spinner"></div>
-        <div class="logo-text">#TEAM<span style="color: #00e676">TAVARES</span></div>
-      </div>
+      }
+    </style>
+    <div class="initial-loader">
+      <div class="spinner"></div>
+      <div class="logo-text">#TEAM<span style="color: #00e676">TAVARES</span></div>
     </div>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
+  </div>
+  <script type="module" src="/src/main.jsx"></script>
+</body>
+
 </html>

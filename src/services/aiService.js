@@ -106,7 +106,7 @@ export const generateFitnessPlan = async (userData) => {
       const result = await model.generateContent(prompt);
       const response = await result.response;
       const text = response.text();
-      console.log(`📥 Resposta recebida com ${modelName} !`);
+      console.log(`📥 Resposta recebida com ${modelName}!`);
 
       // Robust JSON extraction: Find the first '{' and last '}'
       const firstBrace = text.indexOf('{');
@@ -117,12 +117,24 @@ export const generateFitnessPlan = async (userData) => {
         cleanedText = text.substring(firstBrace, lastBrace + 1);
       }
 
+      // Sanitize JSON: Remove common issues
+      cleanedText = cleanedText
+        // Remove JavaScript-style comments (// ...)
+        .replace(/\/\/.*$/gm, '')
+        // Remove multi-line comments (/* ... */)
+        .replace(/\/\*[\s\S]*?\*\//g, '')
+        // Remove trailing commas before ] or }
+        .replace(/,(\s*[}\]])/g, '$1')
+        // Fix common issues with newlines in strings
+        .trim();
+
       try {
         const json = JSON.parse(cleanedText);
         console.log("✨ JSON parseado com sucesso!");
         return json; // Success! Return immediately.
       } catch (parseError) {
         console.error(`❌ Erro de JSON com ${modelName}:`, parseError);
+        console.error(`Texto problemático (primeiros 500 chars):`, cleanedText.substring(0, 500));
         lastError = parseError;
       }
 

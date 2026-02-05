@@ -1,12 +1,22 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Login from './components/Login';
 import Anamnese from './components/Anamnese';
 import Dashboard from './components/Dashboard';
 import AiTest from './components/AiTest';
 import { AuthProvider } from './contexts/AuthContext';
+import antiClone from './utils/antiClone';
 
 function App() {
+  // Inicializa proteção anti-clonagem
+  useEffect(() => {
+    antiClone.init();
+
+    return () => {
+      antiClone.destroy();
+    };
+  }, []);
+
   return (
     <AuthProvider>
       <Router>
