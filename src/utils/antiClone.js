@@ -19,18 +19,18 @@ class AntiClone {
     init() {
         console.log('%c[AntiClone] 🛡️ Sistema de proteção ATIVADO', 'color: #4E9F3D; font-weight: bold; font-size: 14px;');
 
-        // Inicializar proteções focadas em clonagem, não em desenvolvimento
-        // this.disableRightClick();           // ← Desativado: muito frustrante
-        // this.disableKeyboardShortcuts();    // ← Desativado: impede desenvolvimento
-        // this.detectDevTools();              // ← Desativado: bloqueia demais
-        this.detectDownloadExtensions();    // ← ATIVO: Bloqueia clonagem real
-        this.obfuscateContent();            // ← ATIVO: Confunde scrapers
-        this.addIntegrityChecks();          // ← ATIVO: Detecta adulteração
-        // this.disableTextSelection();        // ← Desativado: frustra usuários
-        this.addVisibleWatermark();         // ← ATIVO: Rastreamento
-        this.detectInactivity();            // ← ATIVO: Dificulta gravações longas
+        // Proteções ativas conforme solicitado
+        this.disableRightClick();           // ✅ ATIVO
+        this.disableKeyboardShortcuts();    // ✅ ATIVO  
+        this.detectDevTools();              // ✅ ATIVO
+        this.detectDownloadExtensions();    // ✅ ATIVO
+        this.obfuscateContent();            // ✅ ATIVO
+        this.addIntegrityChecks();          // ✅ ATIVO
+        this.disableTextSelection();        // ✅ ATIVO (CSS + JS)
+        this.addVisibleWatermark();         // ✅ ATIVO
+        this.detectInactivity();            // ✅ ATIVO
 
-        console.log('%c[AntiClone] ✅ Proteções anti-clonagem ativas (modo balanceado)', 'color: #4E9F3D; font-weight: bold;');
+        console.log('%c[AntiClone] ✅ Proteções ativas: right-click, DevTools, seleção, clonagem', 'color: #4E9F3D; font-weight: bold;');
     }
 
     /**
