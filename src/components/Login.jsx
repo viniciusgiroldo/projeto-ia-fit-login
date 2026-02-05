@@ -41,6 +41,11 @@ const Login = () => {
     return <div className="min-h-screen bg-brand-dark flex items-center justify-center"><div className="animate-spin h-8 w-8 border-t-2 border-brand-green rounded-full"></div></div>;
   }
 
+  // Anti-Flicker: If user is logged in, NEVER show the form, keep showing spinner/nothing until redirect happens
+  if (authUser) {
+    return <div className="min-h-screen bg-brand-dark flex items-center justify-center"><div className="animate-spin h-8 w-8 border-t-2 border-brand-green rounded-full"></div></div>;
+  }
+
   const handleAuth = async (e) => {
     e.preventDefault();
     setError('');
