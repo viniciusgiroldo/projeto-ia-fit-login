@@ -21,6 +21,7 @@ const Login = () => {
     const checkSession = async () => {
       if (authUser) {
         try {
+          // Attempt to check strict logic
           const hasData = await userService.hasAnamnese(authUser.id);
           if (hasData) {
             navigate('/dashboard');
@@ -29,6 +30,9 @@ const Login = () => {
           }
         } catch (error) {
           console.error("Erro verificação sessão:", error);
+          // FALLBACK: If DB fails, assume they are a valid user and send to Dashboard
+          // Dashboard handles its own "No Plan" state gracefully.
+          navigate('/dashboard');
         }
       }
       setCheckingSession(false);
