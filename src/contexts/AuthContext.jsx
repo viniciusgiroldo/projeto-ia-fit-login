@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useContext, useEffect, useState, useMemo } from 'react';
 import { supabase } from '../services/supabase';
 
 const AuthContext = createContext({});
@@ -10,22 +10,43 @@ export const AuthProvider = ({ children }) => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
+        let mounted = true;
+
         // Check active session
-        supabase.auth.getSession().then(({ data: { session } }) => {
-            setUser(session?.user ?? null);
-            setLoading(false);
-        });
+        const initSession = async () => {
+            const { data: { session } } = await supabase.auth.getSession();
+            if (mounted) {
+                setUser(session?.user ?? null);
+                setLoading(false);
+            }
+        };
+        initSession();
 
         // Listen for changes
         const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-            setUser(session?.user ?? null);
-            setLoading(false);
+            if (mounted) {
+                setUser(session?.user ?? null);
+                setLoading(false);
+            }
         });
 
-        return () => subscription.unsubscribe();
+        return () => {
+            mounted = false;
+            subscription.unsubscribe();
+        };
     }, []);
 
-    const signIn = async (email, password) => {
+    // Memoize the value to prevent unnecessary re-renders
+    const value = useMemo(() => ({
+        user,
+        signIn,
+        signUp,
+        signOut,
+        loading
+    }), [user, loading]);
+
+    // Define functions strictly outside/inside to avoid hoisting issues, but better here:
+    async function signIn(email, password) {
         // 1. GATEKEEPER CHECK (Whitelist)
         const { data: allowed } = await supabase
             .from('allowed_users')
@@ -37,13 +58,11 @@ export const AuthProvider = ({ children }) => {
             throw new Error('Acesso restrito. Este email não possui uma licença ativa.');
         }
 
-        // 2. Real Auth
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
-    };
+    }
 
-    const signUp = async (email, password, fullName) => {
-        // 1. GATEKEEPER CHECK (Whitelist)
+    async function signUp(email, password, fullName) {
         const { data: allowed } = await supabase
             .from('allowed_users')
             .select('email')
@@ -54,25 +73,22 @@ export const AuthProvider = ({ children }) => {
             throw new Error('Cadastro restrito. Adquira o plano para liberar seu acesso.');
         }
 
-        // 2. Real Signup
         const { data, error } = await supabase.auth.signUp({
             email,
             password,
-            options: {
-                data: { full_name: fullName }
-            }
+            options: { data: { full_name: fullName } }
         });
 
         if (error) throw error;
         return data;
-    };
+    }
 
-    const signOut = async () => {
+    async function signOut() {
         await supabase.auth.signOut();
-    };
+    }
 
     return (
-        <AuthContext.Provider value={{ user, signIn, signUp, signOut, loading }}>
+        <AuthContext.Provider value={value}>
             {!loading && children}
         </AuthContext.Provider>
     );
