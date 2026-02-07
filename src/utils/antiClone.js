@@ -19,18 +19,18 @@ class AntiClone {
     init() {
         console.log('%c[AntiClone] 🛡️ Sistema de proteção ATIVADO', 'color: #4E9F3D; font-weight: bold; font-size: 14px;');
 
-        // TODAS AS PROTEÇÕES DESATIVADAS - permitir acesso total
-        // this.disableRightClick();           // ❌ DESATIVADO
-        // this.disableKeyboardShortcuts();    // ❌ DESATIVADO
-        // this.detectDevTools();              // ❌ DESATIVADO - bloqueava usuários
-        // this.detectDownloadExtensions();    // ❌ DESATIVADO - falsos positivos
-        // this.obfuscateContent();            // ❌ DESATIVADO
-        // this.addIntegrityChecks();          // ❌ DESATIVADO - pode falhar
-        // this.disableTextSelection();        // ❌ DESATIVADO
-        // this.addVisibleWatermark();         // ❌ DESATIVADO
-        // this.detectInactivity();            // ❌ DESATIVADO
+        // PROTEÇÕES PASSIVAS - não bloqueiam acesso
+        this.disableRightClick();           // ✅ ATIVO - apenas bloqueia menu
+        this.disableKeyboardShortcuts();    // ✅ ATIVO - apenas bloqueia atalhos
+        // this.detectDevTools();           // ❌ DESATIVADO - bloqueava com overlay
+        // this.detectDownloadExtensions(); // ❌ DESATIVADO - falsos positivos
+        this.obfuscateContent();            // ✅ ATIVO - apenas adiciona divs
+        // this.addIntegrityChecks();       // ❌ DESATIVADO - pode falhar
+        this.disableTextSelection();        // ✅ ATIVO - apenas CSS
+        this.addVisibleWatermark();         // ✅ ATIVO - apenas visual
+        // this.detectInactivity();         // ❌ DESATIVADO - bloqueia após 45s
 
-        console.log('%c[AntiClone] ⚠️ TODAS AS PROTEÇÕES DESATIVADAS - Acesso total liberado', 'color: #ff9800; font-weight: bold;');
+        console.log('%c[AntiClone] ✅ Proteções PASSIVAS ativas (sem bloqueios)', 'color: #4E9F3D; font-weight: bold;');
     }
 
     /**
