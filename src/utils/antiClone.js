@@ -19,18 +19,18 @@ class AntiClone {
     init() {
         console.log('%c[AntiClone] 🛡️ Sistema de proteção ATIVADO', 'color: #4E9F3D; font-weight: bold; font-size: 14px;');
 
-        // Proteções ativas - MODO SEGURO (não bloqueia usuários)
-        this.disableRightClick();           // ✅ ATIVO
-        this.disableKeyboardShortcuts();    // ✅ ATIVO  
-        this.detectDevTools();              // ✅ ATIVO
-        this.detectDownloadExtensions();    // ✅ ATIVO (versão inteligente)
-        this.obfuscateContent();            // ✅ ATIVO
-        this.addIntegrityChecks();          // ✅ ATIVO
-        this.disableTextSelection();        // ✅ ATIVO (CSS + JS)
-        this.addVisibleWatermark();         // ✅ ATIVO
-        this.detectInactivity();            // ✅ ATIVO
+        // TODAS AS PROTEÇÕES DESATIVADAS - permitir acesso total
+        // this.disableRightClick();           // ❌ DESATIVADO
+        // this.disableKeyboardShortcuts();    // ❌ DESATIVADO
+        // this.detectDevTools();              // ❌ DESATIVADO - bloqueava usuários
+        // this.detectDownloadExtensions();    // ❌ DESATIVADO - falsos positivos
+        // this.obfuscateContent();            // ❌ DESATIVADO
+        // this.addIntegrityChecks();          // ❌ DESATIVADO - pode falhar
+        // this.disableTextSelection();        // ❌ DESATIVADO
+        // this.addVisibleWatermark();         // ❌ DESATIVADO
+        // this.detectInactivity();            // ❌ DESATIVADO
 
-        console.log('%c[AntiClone] ✅ Proteções ativas: right-click, DevTools, seleção, clonagem', 'color: #4E9F3D; font-weight: bold;');
+        console.log('%c[AntiClone] ⚠️ TODAS AS PROTEÇÕES DESATIVADAS - Acesso total liberado', 'color: #ff9800; font-weight: bold;');
     }
 
     /**
